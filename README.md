@@ -1,7 +1,5 @@
 # express-routescan
 
----
-
 This module is an automatic javascript files scanner for Express JS router.
 
 # Installation	
