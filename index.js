@@ -121,7 +121,7 @@ function printStatInfo(){
 
 module.exports = function router (app, directory) {
     console.log('Initializing routes');
-    var dir = directory || path.join(__dirname, 'routes');
+    var dir = directory || path.join(__dirname, '../../routes');
     
     initIgnore(dir);
 
