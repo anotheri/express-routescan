@@ -1,0 +1,38 @@
+{
+  "name": "express-routescans",
+  "homepage": "http://github.com/anotheri/express-routescan",
+
+  "author": {
+    "name": "Alexander Bykhov",
+    "url": "http://github.com/anotheri"
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/anotheri/express-routescan.git"
+  },
+  
+  "description": "Automatic file scanner for Express JS router.",
+  
+  "keywords": [
+    "express",
+    "expressjs",
+    "router",
+    "route",
+    "file",
+    "automatic",
+    "scanner"    
+  ],
+  
+  "version": "0.1.0",
+  
+  "main": "./index",
+    
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  
+  "engines": {
+    "node": "*"
+  }
+}
