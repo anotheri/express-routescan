@@ -19,7 +19,7 @@ var valides   = [];
 var ignored   = [];
 var invalides = [];
 
-var ignoreFileName = './.routerignore';
+var ignoreFileName = './.routeignore';
 var ignoreFiles    = [];
 
 //regexp
