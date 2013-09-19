@@ -2,12 +2,12 @@
 
 This module is an automatic javascript files scanner for Express JS router.
 
-# Installation	
+## Installation	
 ```
 $ npm install express-routescan
 ```
 
-# Usage
+## Usage
 Express-routescan module is the simplest way to configure and maintain router for complex express applications. You just have to create a 'routes' folder (default) inside your project and write your routes.
 
 So app structure will be like this:
@@ -37,45 +37,76 @@ routescan(app);
 // ...
 ```
 
+###Options
+
+###### Another directory
+
 If you want to use another folder for routes, you should use the full path:
 
 ```javascript
-var fullPath = path.join(__dirname, './path/for/another/routes/folder/insideMyProject');
-routescan(app, fullPath);
+routescan(app, {
+	directory: path.join(__dirname, './path/for/another/routes/folder/insideMyProject')
+});
 ```
 
-# Route files
-In turn, the route file is a file with module.exports like this:
+
+###### Verbose
+###### Extentions
+
+## Route files
+#### Simple example
+In turn, the simplest route file is a file with module.exports like this:
 
 ```javascript
 /* GET home page. */
 
-var indexFn = function(req, res){
-	res.send("It's main page of my app.");
-};
-
 module.exports = {
-	route: '/',
-	callback: indexFn
+	'/': function(req, res){
+		res.send("It's main page of my app.");
+	}
 };
 ```
 
-_'route'_ and _'callback'_ keys **are required**. Express-routescan ignore invalid routes.
+Express-routescan ignore invalid routes by default.
 
-**GET** is default method for route. But you can set optional another _'method'_ (one of HTTP methods described in RFC 2616) and _'middleware'_ function(s):
+#### Complex example
+['get'] is default methods array for route. But you can set optional another _'methods'_ (array of HTTP methods described in RFC 2616) and _'middleware'_ function(s):
 
 ```javascript
 module.exports = {
-	method: 'post',
-	route: '/myAwesomeRouteForPostRequest',
-	middleware: [myMiddlewareFn1, myMiddlewareFn2],
- 	callback: function(req, res){
-		res.send("It's my awesome answer for POST request.");
-	};
+	'/myAwesomeRouteForGetAndPost': {
+		methods: ['get', 'post'],
+		middleware: [myMiddlewareFnOne, myMiddlewareFnTwo],
+	 	callback: function(req, res){
+			res.send("It's my awesome answer for GET and POST requests.");
+		}
+	},
+	'/myAnotherAwesomeRouteForPostRequest': {
+		methods: ['post'],
+		middleware: [myMiddlewareFnTwo],
+	 	callback: function(req, res){
+			res.send("It's my another awesome answer only for POST request.");
+		}
+	}
 };
 ```
 
-# .routeignore
+#### RegExp usage example
+Next example shows how you can use regexp with express-routescan.
+
+```javascript
+module.exports = {
+	'/commits': {
+		regexp: /^\/commits\/(\w+)(?:\.\.(\w+))?$/,
+		callback: function(req, res){
+			res.send("It's page would match \"GET /commits/71dbb9c\" as well as \"GET /commits/71dbb9c..4c084f9\".");
+		}
+	}
+};
+```
+
+
+## .routeignore
 As was mentioned above express-routescan ignore invalid route-files. Scanner also ignore all _not .js_ files inside routes folder. If you want to ignore _.js_ files you can use _.routeignore_ file inside your routes folder to add ignore rules for scanner.
 
 For example, if you don't want use routes from _'./routes/temp/'_ folder just create _'./routes/.routeignore'_ file with next content:
@@ -85,7 +116,7 @@ temp/
 ```
 
 
-# License
+## License
 The MIT License (MIT)
 
 Copyright (c) 2013 Alexander Bykhov
