@@ -163,7 +163,7 @@ function getValidMethods(methods, route, file){
 /**
  * Function which validates route parameters.
  * @param {String} route — route path
- * @param {Function} fn — callback function for route
+ * @param {Function} fn — a callback function for route
  * @param {Array} methods — array of HTTP methods for route
  * @param {String} file — full path of route file
  * @return {Boolean} valid — validation result
@@ -198,11 +198,11 @@ function addRoute (app, file){
                 if (isRouteValid(route, action, methods, file)) {
                     applyRoute(app, route, action, methods);
                 }
-            } else if (typeof action.callback === 'function') {
+            } else if (typeof action.fn === 'function') {
                 methods = getValidMethods(action.methods, route, file);
-                if (isRouteValid(route, action.callback, methods, file)) {
+                if (isRouteValid(route, action.fn, methods, file)) {
                     var _route = (action.regexp && util.isRegExp(action.regexp)) ? action.regexp : route;
-                    applyRoute(app, _route, action.callback, methods, action.middleware);
+                    applyRoute(app, _route, action.fn, methods, action.middleware);
                 }
             } else inspectError(1, file, route);
         }
@@ -213,7 +213,7 @@ function addRoute (app, file){
  * Function which applies a single route for express application object.
  * @param {Object} app — express application object
  * @param {String} route — route path or RegExp
- * @param {Function} fn — callback function for route
+ * @param {Function} fn — a callback function for route
  * @param {Array} methods — array of HTTP methods for route
  * @param {Function|Array} middleware — middleware function of array of middleware functions
  */
