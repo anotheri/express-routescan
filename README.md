@@ -3,15 +3,17 @@
 This [nodejs module](https://npmjs.org/package/express-routescan) is an automatic javascript files
 scanner for Express JS router.
 
+
 ## Installation
 
 ```
 $ npm install express-routescan
 ```
 
+
 ## Usage
 
-_Express-routescan_ module is the simplest way to configure and maintain router for complex express
+Express-routescan module is the simplest way to configure and maintain router for complex express
 applications. You just have to create a 'routes/' folder (default) inside your project and write there
 your routes.
 
@@ -24,7 +26,7 @@ So folder structure of your app will be like this:
 	- transaction/
 		- submit.js
 
-For correct working you should require _express-routescan_ module and pass _express application_ into
+For correct working you should require express-routescan module and pass _express application_ into
 the one as first argument:
 
 ```javascript
@@ -45,46 +47,28 @@ routescan(app);
 // ...
 ```
 
+
 ### Options
 
 There are some additional options for express-routesan config:
-- directory – full path to the folder with the routes;
-- verbose – key for enable logging information;
-- ext – array of valid file extentions.
 
-###### Directory
+- **`directory`** — string, default value is `path.join(__dirname, './routes/')`, so it's ./routes/ folder inside your project. If you want to use another folder, you should start express-routescan module with needed value of `directory` option. This option value should be a **full path to the your routes folder**. 
 
-Directory is a full path to the your routes folder. If you want to use another folder, you should
-routescan with needed value of `directory` option _(use only the full path)_. Default value is
-`path.join(__dirname, './routes/')`, so it's `./routes/` folder inside your project.
+- **`verbose`** – boolean, default is `false`. This option is using for logging information about scanned files (ignored, invalid, routed).
 
-```javascript
-routescan(app, {
-	directory: path.join(__dirname, './path/for/another/routes/folder/insideMyProject')
-});
-```
+- **`ext`** – array, default value is `['.js']`. Use `ext` key if you want to redefine an array with valid file extensions, e.g. `['.rt']`.
 
-###### Verbose
-
-The `verbose` option is for logging information about scanned files (ignored, invalid, routed). Default
-value is `false`.
+- **`ignoreInvalid`** — boolean, default value is `false`. Use `ignoreInvalid: true` if you don't want to get errors about invalid files in your routes folder.
 
 ```javascript
 routescan(app, {
-	verbose: true
+	directory: path.join(__dirname, './path/for/another/routes/folder/insideMyProject'),
+	verbose: true,
+	ext: ['.rt', '.js'], // is for enable scanning for all *.rt and *.js files
+	ignoreInvalid: true // is for ignoring invalid routes
 });
 ```
 
-###### Extentions
-
-Use `ext` key if you want to define an array with valid file extensions, e.g. `['.rt']`. Default value
-is `['.js']`.
-
-```javascript
-routescan(app, {
-	ext: ['.rt', '.js'] // is for enable scanning for all *.rt and *.js files
-});
-```
 
 ## Route files
 
@@ -106,7 +90,7 @@ module.exports = {
 };
 ```
 
-_Express-routescan_ ignore invalid routes by default.
+Express-routescan ignore invalid routes by default.
 
 #### More complicated example
 
@@ -126,7 +110,7 @@ module.exports = {
 	'/myAwesomeRouteForGetAndPost': {
 		methods: ['get', 'post'],
 		middleware: [myMiddlewareFnOne, myMiddlewareFnTwo],
-	 	callback: function(req, res){
+	 	fn: function(req, res){
 			res.send("It's my awesome answer for GET and POST requests.");
 		}
 	},
@@ -134,7 +118,7 @@ module.exports = {
 	'/myAnotherAwesomeRouteForPostRequest': {
 		methods: ['post'],
 		middleware: [myMiddlewareFnThree],
-	 	callback: function(req, res){
+	 	fn: function(req, res){
 			res.send("It's my another awesome answer only for POST request.");
 		}
 	}
@@ -153,7 +137,7 @@ module.exports = {
 
 	'/commits': {
 		regexp: /^\/commits\/(\w+)(?:\.\.(\w+))?$/,
-		callback: function(req, res){
+		fn: function(req, res){
 			res.send("It's page would match \"GET /commits/71dbb9c\" as well as \"GET /commits/71dbb9c..4c084f9\".");
 		}
 	}
