@@ -25,6 +25,7 @@ var extentions     = [];
 var defaultFolder  = path.join(__dirname, '../../routes');
 var ignoreFileName = './.routeignore';
 var ignoreFiles    = [];
+var ignoreInvalid  = false;
 
 //regexp
 var reIgnoreFiles      = null;
@@ -76,11 +77,31 @@ function addIgnoreRule(line, noEscape) {
 
 /**
  * Function which inspects invalid files.
+
+ * @param {Int} errCode — code of throwed error
  * @param {String} file — full path of route file
  * @param {String} route — route path
+ * @param {String} method — unknown HTTP method
  */
-function inspectInvalid (file, route) {
-    invalides.push(file + '\twith route: ' + route);
+function inspectError (errCode, file, route, method) {
+    var inspMsg = file + '\twith route: ' + route;
+    var errMsg = ' File "' + file + '" has wrong definition of the route: "' + route + '".';
+    var noFnMsg = '\n\t' + 'It must be a function or an object with `fn` property.';
+    var methodMsg = (method) ? '\n\t' + 'The configuration of the one has unknown HTTP method \"' + method + '\".\n': '';
+    var existMsg = ' File "' + file + '" has definition of the route: "' + route + '" that has been already applied to application.';
+
+    if (errCode === 0) {
+        throw new Error(' The first parameter is required and must be an express application.');
+    } else if (errCode === 1) {
+        invalides.push(inspMsg);
+        if (!ignoreInvalid) throw new Error(errMsg + noFnMsg);
+    } else if (errCode === 2) {
+        invalides.push(inspMsg + methodMsg);
+        if (!ignoreInvalid) throw new Error(errMsg + methodMsg);
+    } else if (errCode === 3) {
+        invalides.push(inspMsg);
+        if (!ignoreInvalid) throw new Error(existMsg);
+    }
 }
 
 /**
@@ -120,13 +141,16 @@ function initRoutes(app, dir) {
  * @param {Array} methods — array of HTTP methods
  * @return {Array} result — array of valid HTTP methods
  */
-function getValidMethods(methods){
+function getValidMethods(methods, route, file){
     var result = [];
     if (methods && util.isArray(methods)) {
         for (var i = 0, l = methods.length; i < l; i++) {
             var m = methods[i].toLowerCase();
-            if (HTTPMETHODS[m]) result.push(m);
-            // TODO: invalides.push
+            if (HTTPMETHODS[m]) {
+                result.push(m);
+            } else {
+                inspectError(2, file, route, m);
+            }
         }
     } else {
         result = ['get'];
@@ -151,7 +175,7 @@ function isRouteValid(route, fn, methods, file) {
         !valides[route];
 
     if (valid) valides[route] = file;
-    else inspectInvalid(file, route);
+    else inspectError(3, file, route);
 
     return valid;
 }
@@ -175,12 +199,12 @@ function addRoute (app, file){
                     applyRoute(app, route, action, methods);
                 }
             } else if (typeof action.callback === 'function') {
-                methods = getValidMethods(action.methods);
+                methods = getValidMethods(action.methods, route, file);
                 if (isRouteValid(route, action.callback, methods, file)) {
                     var _route = (action.regexp && util.isRegExp(action.regexp)) ? action.regexp : route;
                     applyRoute(app, _route, action.callback, methods, action.middleware);
                 }
-            } else inspectInvalid(file, route);
+            } else inspectError(1, file, route);
         }
     }
 }
@@ -224,29 +248,41 @@ function printArray (array, before, after) {
  */
 function printStatInfo(){
     console.log('\nStatistic info:');
-    console.log(' [routed]:');
-    printArray(valides, '\t');
-    console.log(' [invalid]:');
-    printArray(invalides, '\t');
-    console.log(' [ignored]:');
-    printArray(ignored, '\t');
+    if (Object.keys(valides).length > 0) {
+        console.log(' [routed]:');
+        printArray(valides, '\t');
+    }
+    if (invalides.length > 0) {
+        console.log(' [invalid]:');
+        printArray(invalides, '\t');
+    }
+    if (ignored.length > 0) {
+        console.log(' [ignored]:');
+        printArray(ignored, '\t');
+    }
 }
 
+
+
+/**
+ * Function which initialises configuration, .routeignore file and route files. Main function of module.
+ * @param {Object} app — express application object
+ * @param {Object} opts — object with extra options
+ */
 module.exports = function router (app, opts) {
-    if (!app) {
-        throw new Error('The first parameter is required and must be an express application.');
-    }
+    if (!app) inspectError(0);
     
     if (!opts) opts = {};
-    var dir     = (opts.directory) ? opts.directory : defaultFolder;
-    var verbose = (opts.verbose) ? opts.verbose : false;
-    extentions  = (!util.isArray(opts.ext)) ? opts.ext ? [opts.ext] : defaultExt : opts.ext;
+    
+    var dir       = opts.directory || defaultFolder;
+    ignoreInvalid = opts.ignoreInvalid || false;
+    extentions    = (!util.isArray(opts.ext)) ? opts.ext ? [opts.ext] : defaultExt : opts.ext;
 
     initIgnore(dir);
     
     console.log('Initialized routes:');
     initRoutes(app, dir);
     
-    if (verbose) printStatInfo();
+    if (opts.verbose) printStatInfo();
     console.log('Done.');
 };
