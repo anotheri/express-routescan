@@ -52,20 +52,20 @@ routescan(app);
 
 There are some additional options for express-routesan config:
 
-- **`directory`** — string, default value is `path.join(__dirname, './routes/')`, so it's ./routes/ folder inside your project. If you want to use another folder, you should start express-routescan module with needed value of `directory` option. This option value should be a **full path to the your routes folder**. 
+- `directory` — string, default value is `path.join(__dirname, './routes/')`, so it's ./routes/ folder inside your project. If you want to use another folder, you should start express-routescan module with needed value of `directory` option. This option value should be a **full path to the your routes folder**. 
 
-- **`verbose`** – boolean, default is `false`. This option is using for logging information about scanned files (ignored, invalid, routed).
+- `ext` – array, default value is `['.js']`. Use `ext` key if you want to redefine an array with valid file extensions.
 
-- **`ext`** – array, default value is `['.js']`. Use `ext` key if you want to redefine an array with valid file extensions, e.g. `['.rt']`.
+- `ignoreInvalid` — boolean, default value is `false`. Use `ignoreInvalid: true` if you don't want to get errors about invalid files in your routes folder.
 
-- **`ignoreInvalid`** — boolean, default value is `false`. Use `ignoreInvalid: true` if you don't want to get errors about invalid files in your routes folder.
+- `verbose` – boolean, default is `false`. This option is using for logging information about scanned files (ignored, invalid, routed).
 
 ```javascript
 routescan(app, {
 	directory: path.join(__dirname, './path/for/another/routes/folder/insideMyProject'),
-	verbose: true,
 	ext: ['.rt', '.js'], // is for enable scanning for all *.rt and *.js files
-	ignoreInvalid: true // is for ignoring invalid routes
+	ignoreInvalid: true, // is for ignoring invalid routes
+	verbose: true
 });
 ```
 
