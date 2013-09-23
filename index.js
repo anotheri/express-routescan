@@ -5,11 +5,13 @@ var fs   = require('fs');
 var path = require('path');
 var util = require('util');
 
-var valides   = {};
-var ignored   = [];
-var invalides = [];
+var valid   = {};
+var invalid = [];
+var ignored = [];
+
 
 var HTTPMETHODS = {
+    "all":     true,
     "options": true,
     "get":     true,
     "head":    true,
@@ -17,7 +19,7 @@ var HTTPMETHODS = {
     "put":     true,
     "delete":  true,
     "trace":   true,
-    "all":     true
+    "connect": false /* HTTP CONNECT method is unknown function for Express */
 };
 
 var defaultExt     = ['.js'];
@@ -30,7 +32,7 @@ var ignoreInvalid  = false;
 //regexp
 var reIgnoreFiles      = null;
 var reEscComments      = /\\#/g;
-var reUnescapeComments = /\^\^/g; // note that '^^' is used in place of escaped comments
+var reUnescapeComments = /\^\^/g; /* note that '^^' is used in place of escaped comments */
 var reComments         = /#.*$/;
 var reTrim             = /^(\s|\u00A0)+|(\s|\u00A0)+$/g;
 var reEscapeChars      = /[.|\-[\]()\\]/g;
@@ -41,7 +43,7 @@ var reAsterisk         = /\*/g;
  * Function for initialisation rules of '.routeignore' file.
  * @param {String} dir — full path of routes folder
  */
-function initIgnore (dir) {
+function initIgnore(dir) {
     var ignoreFile = path.join(dir, ignoreFileName);
     if (fs.existsSync(ignoreFile)) {
         var ignore = fs.readFileSync(ignoreFile).toString().split(/\n/);
@@ -83,24 +85,36 @@ function addIgnoreRule(line, noEscape) {
  * @param {String} route — route path
  * @param {String} method — unknown HTTP method
  */
-function inspectError (errCode, file, route, method) {
+function inspectError(errCode, file, route, method) {
     var inspMsg = file + '\twith route: ' + route;
-    var errMsg = ' File "' + file + '" has wrong definition of the route: "' + route + '".';
+    var errMsg = 'File "' + file + '" has wrong definition of the route: "' + route + '".';
     var noFnMsg = '\n\t' + 'It must be a function or an object with `fn` property.';
     var methodMsg = (method) ? '\n\t' + 'The configuration of the one has unknown HTTP method \"' + method + '\".\n': '';
-    var existMsg = ' File "' + file + '" has definition of the route: "' + route + '" that has been already applied to application.';
+    var existMsg = 'File "' + file + '" has definition of the route: "' + route + '" for the "' + method.toUpperCase() + '" method that has been already applied to application.';
+
+
+    var error = {
+        code: 3,
+        msg: null,
+        file: file,
+        route: route,
+        method: method
+    };
 
     if (errCode === 0) {
-        throw new Error(' The first parameter is required and must be an express application.');
-    } else if (errCode === 1) {
-        invalides.push(inspMsg);
-        if (!ignoreInvalid) throw new Error(errMsg + noFnMsg);
-    } else if (errCode === 2) {
-        invalides.push(inspMsg + methodMsg);
-        if (!ignoreInvalid) throw new Error(errMsg + methodMsg);
-    } else if (errCode === 3) {
-        invalides.push(inspMsg);
-        if (!ignoreInvalid) throw new Error(existMsg);
+        error.msg = ' The first parameter is required and must be an express application.';
+        throw new Error(error.msg);
+    } else {
+        if (errCode === 1) {
+            error.msg = errMsg + noFnMsg;
+        } else if (errCode === 2) {
+            error.msg = errMsg + methodMsg;
+        } else if (errCode === 3) {
+            error.msg = existMsg;
+        }
+
+        invalid.push(error);
+        if (!ignoreInvalid) throw new Error(error.msg);
     }
 }
 
@@ -141,7 +155,7 @@ function initRoutes(app, dir) {
  * @param {Array} methods — array of HTTP methods
  * @return {Array} result — array of valid HTTP methods
  */
-function getValidMethods(methods, route, file){
+function getValidMethods(methods, route, file) {
     var result = [];
     if (methods && util.isArray(methods)) {
         for (var i = 0, l = methods.length; i < l; i++) {
@@ -166,18 +180,26 @@ function getValidMethods(methods, route, file){
  * @param {Function} fn — a callback function for route
  * @param {Array} methods — array of HTTP methods for route
  * @param {String} file — full path of route file
- * @return {Boolean} valid — validation result
+ * @return {Boolean} isValid — validation result
  */
-function isRouteValid(route, fn, methods, file) {
-    var valid = typeof route === 'string' &&
-        typeof fn === 'function' &&
-        methods.length > 0 &&
-        !valides[route];
+function isRouteValid(route, fn, method, file) {
+    var validRt = typeof route === 'string' || util.isRegExp(route);
+    var validEx = !(valid[route] && valid[route][method]);
+    
+    var isValid = validRt && validEx;
 
-    if (valid) valides[route] = file;
-    else inspectError(3, file, route);
+    if (isValid) {
+        var validObj = {};
+        validObj[method] = file;
 
-    return valid;
+        if(!valid[route]) {
+            valid[route] = validObj;
+        } else {
+            valid[route][method] = file;
+        }
+    } else inspectError(3, file, route, method);
+
+    return isValid;
 }
 
 /**
@@ -185,26 +207,25 @@ function isRouteValid(route, fn, methods, file) {
  * @param {Object} app — express application object
  * @param {String} file — full path of route file
  */
-function addRoute (app, file){
+function addRoute(app, file) {
     var r = require(file);
     var methods;
-
     if (r !== undefined && typeof r === 'object') {
         for (var route in r) {
-            var action = r[route];
+            var actions = util.isArray(r[route]) ? r[route] : [r[route]];
+            
+            for (var i = 0, l = actions.length; i < l; i++) {
+                var action = actions[i];
 
-            if (typeof action === 'function') {
-                methods = ['get'];
-                if (isRouteValid(route, action, methods, file)) {
-                    applyRoute(app, route, action, methods);
-                }
-            } else if (typeof action.fn === 'function') {
-                methods = getValidMethods(action.methods, route, file);
-                if (isRouteValid(route, action.fn, methods, file)) {
+                if (typeof action === 'function') {
+                    methods = ['get'];
+                    applyRoute(app, file, route, action, methods);
+                } else if (typeof action.fn === 'function') {
+                    methods = getValidMethods(action.methods, route, file);
                     var _route = (action.regexp && util.isRegExp(action.regexp)) ? action.regexp : route;
-                    applyRoute(app, _route, action.fn, methods, action.middleware);
-                }
-            } else inspectError(1, file, route);
+                    applyRoute(app, file, _route, action.fn, methods, action.middleware);
+                } else inspectError(1, file, route);
+            }
         }
     }
 }
@@ -212,64 +233,71 @@ function addRoute (app, file){
 /**
  * Function which applies a single route for express application object.
  * @param {Object} app — express application object
+ * @param {String} file — full path of route file
  * @param {String} route — route path or RegExp
  * @param {Function} fn — a callback function for route
  * @param {Array} methods — array of HTTP methods for route
  * @param {Function|Array} middleware — middleware function of array of middleware functions
  */
-function applyRoute (app, route, fn, methods, middleware) {
+function applyRoute(app, file, route, fn, methods, middleware) {
     for (var i = 0, l = methods.length; i < l; i++) {
         var method = methods[i];
-        app[method](route, middleware || [], fn);
-        console.log(' #', method.toUpperCase(), route);
-    }
-}
-
-/**
- * Function which prints into console array with extra strings before and after element of array.
- * @param {Array} array — array of strings for printing into console
- * @param {String} before — string which will be printed before array element
- * @param {String} after — string which will be printed after array element
- */
-function printArray (array, before, after) {
-    if (util.isArray(array)) {
-        for (var i = 0, l = array.length; i < l; i++) {
-            console.log(before || "", array[i], after || "");
-        }
-    } else if (typeof array === 'object') {
-        for (var route in array) {
-            console.log(before || "", array[route], '\twith route:', route, after || "");
+        if(isRouteValid(route, fn, method, file)){
+            app[method](route, middleware || [], fn);
+            console.log(' #', method.toUpperCase(), route);
         }
     }
 }
 
 /**
- * Function which prints statistic information about ignored files, invalid and valid route-files into console.
+ * Function which prints into console array information about valid routes.
  */
-function printStatInfo(){
-    console.log('\nStatistic info:');
-    if (Object.keys(valides).length > 0) {
-        console.log(' [routed]:');
-        printArray(valides, '\t');
+function printValid() {
+    if (Object.keys(valid).length > 0) {
+        var counter = 1;
+        console.log('[routed]:');
+        for (var route in valid) {
+            for (var method in valid[route]) {
+                var file = valid[route][method];
+                console.log(counter++ + '.', file, '\t', method.toUpperCase(), '\t', route);
+            }
+        }
+        // console.log('[routed]: ' + JSON.stringify(valid, null, '\t'));
     }
-    if (invalides.length > 0) {
-        console.log(' [invalid]:');
-        printArray(invalides, '\t');
+}
+
+/**
+ * Function which prints into console error messages about invalid routes.
+ */
+function printInvalid() {
+    if (invalid.length > 0) {
+        console.log('\n[invalid]:');
+        for (var i = 0, l = invalid.length; i < l; i++) {
+            console.log(i+1 + ". " + invalid[i].msg);
+        }
+        
     }
+    // console.log(JSON.stringify(invalid, null, '\t'));
+}
+
+/**
+ * Function which prints into console array of ignored files.
+ */
+function printIgnored() {
     if (ignored.length > 0) {
-        console.log(' [ignored]:');
-        printArray(ignored, '\t');
+        console.log('\n[ignored]:');
+        for (var i = 0, l = ignored.length; i < l; i++) {
+            console.log(i+1 + ". " + ignored[i]);
+        }
     }
 }
-
-
 
 /**
  * Function which initialises configuration, .routeignore file and route files. Main function of module.
  * @param {Object} app — express application object
  * @param {Object} opts — object with extra options
  */
-module.exports = function router (app, opts) {
+module.exports = function router(app, opts) {
     if (!app) inspectError(0);
     
     if (!opts) opts = {};
@@ -283,6 +311,11 @@ module.exports = function router (app, opts) {
     console.log('Initialized routes:');
     initRoutes(app, dir);
     
-    if (opts.verbose) printStatInfo();
+    if (opts.verbose) {
+        console.log('\nStatistic info:');
+        printValid();
+        printInvalid();
+        printIgnored();
+    }
     console.log('Done.');
 };
