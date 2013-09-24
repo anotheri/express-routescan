@@ -302,7 +302,7 @@ module.exports = function router(app, opts) {
     
     if (!opts) opts = {};
     
-    var dir       = opts.directory || defaultFolder;
+    var dir       = path.resolve(__dirname, "../../", opts.directory) || defaultFolder;
     ignoreInvalid = opts.ignoreInvalid || false;
     extentions    = (!util.isArray(opts.ext)) ? opts.ext ? [opts.ext] : defaultExt : opts.ext;
 

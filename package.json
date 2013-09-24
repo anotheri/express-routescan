@@ -29,10 +29,20 @@
   "main": "./index",
     
   "dependencies": {},
-  "devDependencies": {},
+  
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*",
+    "supertest": "*"
+  },
+
   "optionalDependencies": {},
   
   "engines": {
     "node": "*"
+  },
+
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec"
   }
 }
