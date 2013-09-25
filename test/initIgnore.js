@@ -6,6 +6,11 @@ var assert = require('assert');
 var initIgnore = require('../lib/initIgnore');
 
 describe('Test initIgnore function', function() {
+
+    it("should exists", function() {
+        should.exist(initIgnore);
+    });
+
     var dir = __dirname + '/routes';
     var reIgnoreFiles = initIgnore(dir);
     var ignoreFile = path.join(dir, './.routeignore');

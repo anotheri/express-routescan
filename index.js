@@ -155,7 +155,7 @@ function initRoutes(app, dir) {
  * @param {Array} methods — array of HTTP methods
  * @return {Array} result — array of valid HTTP methods
  */
-function getValidMethods(methods, route, file) {
+function getValidMethods(methods, file, route) {
     var result = [];
     if (methods && util.isArray(methods)) {
         for (var i = 0, l = methods.length; i < l; i++) {
@@ -221,7 +221,7 @@ function addRoute(app, file) {
                     methods = ['get'];
                     applyRoute(app, file, route, action, methods);
                 } else if (typeof action.fn === 'function') {
-                    methods = getValidMethods(action.methods, route, file);
+                    methods = getValidMethods(action.methods, file, route);
                     var _route = (action.regexp && util.isRegExp(action.regexp)) ? action.regexp : route;
                     applyRoute(app, file, _route, action.fn, methods, action.middleware);
                 } else inspectError(1, file, route);
