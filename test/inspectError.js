@@ -13,68 +13,77 @@ describe('Test inspectError function', function() {
 
     describe('errCode is `0`:', function() {
         it('should throw error "The first parameter is required and must be an express application."', function() {
-            var invalid = [];
             var reError = /The first parameter is required and must be an express application/;
-            var invalidIgnore = true;
+            var global = {
+                ignoreInvalid: true,
+                invalid: []
+            };
 
             (function(){
                 inspectError(0);
             }).should.throw(reError);
             
             (function(){
-                inspectError(0, null, null, null, invalidIgnore, invalid);
+                inspectError(0, null, null, null, global);
             }).should.throw(reError);
             
-            invalid.should.have.lengthOf(0);
+            global.invalid.should.have.lengthOf(0);
         });
     });
 
     describe('errCode is `1`', function() {
-        var invalid = [];
         var errCode = 1;
         var reError = /It must be a function or an object with `fn` property/;
         var file = "file1";
         var route = "route1";
         var method = "method1";
 
-        describe('and invalidIgnore is `false`:', function() {
-            var invalidIgnore = false;
+        describe('and ignoreInvalid is `false`:', function() {
+            var global = {
+                ignoreInvalid: false,
+                invalid: []
+            };
             
             it('should throw error "It must be a function or an object with `fn` property"', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(reError);
             });
 
             it('with filename', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(new RegExp(file, "i"));
             });
 
             it('and with route', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(new RegExp(route, "i"));
             });
         });
 
-        describe('and invalidIgnore is `true`:', function() {
-            var invalidIgnore = true;
+        describe('and ignoreInvalid is `true`:', function() {
             var err;
+            var global = {
+                ignoreInvalid: true,
+                invalid: []
+            };
             
             it('should add error objects into array', function() {
-                var len = invalid.length;
+                var len = global.invalid.length;
+
                 for (var i = 0; i < 10; i++) {
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                     len++;
                 }
-                invalid.should.have.lengthOf(len);
+                global.invalid.should.have.lengthOf(len);
             });
+            
 
             it('should not throw any error', function() {
                 (function(){
-                    err = inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    err = inspectError(errCode, file, route, method, global);
                 }).should.not.throw();
             });
 
@@ -107,57 +116,62 @@ describe('Test inspectError function', function() {
     });
 
     describe('errCode is `2`', function() {
-        var invalid = [];
         var errCode = 2;
         var reError = /unknown HTTP method/;
         var file = "file2";
         var route = "route2";
         var method = "method2";
 
-        describe('and invalidIgnore is `false`:', function() {
-            var invalidIgnore = false;
+        describe('and ignoreInvalid is `false`:', function() {
+            var global = {
+                ignoreInvalid: false,
+                invalid: []
+            };
             
             it('should throw error "The configuration of the route has unknown HTTP method"', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(reError);
             });
 
             it('with filename', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(new RegExp(file, "i"));
             });
 
             it('and with route', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(new RegExp(route, "i"));
             });
 
             it('and with method', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(new RegExp(method, "i"));
             });
         });
 
-        describe('and invalidIgnore is `true`:', function() {
-            var invalidIgnore = true;
+        describe('and ignoreInvalid is `true`:', function() {
             var err;
+            var global = {
+                ignoreInvalid: true,
+                invalid: []
+            };
             
             it('should add error objects into array', function() {
-                var len = invalid.length;
+                var len = global.invalid.length;
                 for (var i = 0; i < 10; i++) {
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                     len++;
                 }
-                invalid.should.have.lengthOf(len);
+                global.invalid.should.have.lengthOf(len);
             });
 
             it('should not throw any error', function() {
                 (function(){
-                    err = inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    err = inspectError(errCode, file, route, method, global);
                 }).should.not.throw();
             });
 
@@ -190,57 +204,63 @@ describe('Test inspectError function', function() {
     });
 
     describe('errCode is `3`', function() {
-        var invalid = [];
         var errCode = 3;
         var reError = /has been already applied to application/;
         var file = "file2";
         var route = "route2";
         var method = "method2";
 
-        describe('and invalidIgnore is `false`:', function() {
-            var invalidIgnore = false;
+
+        describe('and ignoreInvalid is `false`:', function() {
+            var global = {
+                ignoreInvalid: false,
+                invalid: []
+            };
             
             it('should throw error that route "has been already applied to application"', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(reError);
             });
 
             it('with filename', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(new RegExp(file, "i"));
             });
 
             it('and with route', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(new RegExp(route, "i"));
             });
 
             it('and with method', function() {
                 (function(){
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                 }).should.throw(new RegExp(method, "i"));
             });
         });
 
-        describe('and invalidIgnore is `true`:', function() {
-            var invalidIgnore = true;
+        describe('and ignoreInvalid is `true`:', function() {
             var err;
-            
+            var global = {
+                ignoreInvalid: true,
+                invalid: []
+            };
+
             it('should add error objects into array', function() {
-                var len = invalid.length;
+                var len = global.invalid.length;
                 for (var i = 0; i < 10; i++) {
-                    inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    inspectError(errCode, file, route, method, global);
                     len++;
                 }
-                invalid.should.have.lengthOf(len);
+                global.invalid.should.have.lengthOf(len);
             });
 
             it('should not throw any error', function() {
                 (function(){
-                    err = inspectError(errCode, file, route, method, invalid, invalidIgnore);
+                    err = inspectError(errCode, file, route, method, global);
                 }).should.not.throw();
             });
 
