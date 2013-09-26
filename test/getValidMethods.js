@@ -1,9 +1,11 @@
+var libpath = process.env['ROUTESCAN_COV'] ? '../lib-cov' : '../lib';
+
 var path   = require('path');
 var fs     = require('fs');
 var should = require('should');
 var assert = require('assert');
 
-var getValidMethods = require('../lib/getValidMethods');
+var getValidMethods = require(libpath + '/getValidMethods');
 
 describe('Test getValidMethods function', function() {
     var validMethods = ['all', 'options', 'get', 'head', 'post', 'put', 'delete', 'trace'];
@@ -109,10 +111,11 @@ describe('Test getValidMethods function', function() {
                 ignoreInvalid: ignoreInvalid,
                 invalid: []
             };
+            var fn = function() {
+                getValidMethods(wrongValues[i], route, file, global);
+            };
             for (var i = 0; i < wrongValues.length; i++) {
-                (function() {
-                    getValidMethods(wrongValues[i], route, file, global);
-                }).should.throw();
+                (fn).should.throw();
             }
             global.invalid.should.have.lengthOf(wrongValues.length);
         });
@@ -131,10 +134,11 @@ describe('Test getValidMethods function', function() {
                 ignoreInvalid: ignoreInvalid,
                 invalid: []
             };
+            var fn = function() {
+                getValidMethods(wrongValues[i], route, file, global);
+            };
             for (var i = 0; i < wrongValues.length; i++) {
-                (function() {
-                    getValidMethods(wrongValues[i], route, file, global);
-                }).should.throw();
+                (fn).should.throw();
             }
             global.invalid.should.have.lengthOf(wrongValues.length);
         });

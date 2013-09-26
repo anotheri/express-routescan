@@ -1,0 +1,12 @@
+
+/*
+ * It's correct route defenition for tests as `good.js`. But it has `.rt` extension.
+ */
+
+var correct = function(req, res){
+    res.send("It's correct route");
+};
+
+module.exports = {
+    '/correct': correct
+};

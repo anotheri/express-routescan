@@ -1,6 +1,6 @@
 
 /*
- * GET users listing.
+ * It's good and complex route defenition for tests.
  */
 
 var listGet = function(req, res){

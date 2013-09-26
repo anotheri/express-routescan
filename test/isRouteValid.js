@@ -1,9 +1,11 @@
+var libpath = process.env['ROUTESCAN_COV'] ? '../lib-cov' : '../lib';
+
 var path   = require('path');
 var fs     = require('fs');
 var should = require('should');
 var assert = require('assert');
 
-var isRouteValid = require('../lib/isRouteValid');
+var isRouteValid = require(libpath + '/isRouteValid');
 
 describe('Test isRouteValid function', function() {
     var validMethods = ['all', 'options', 'get', 'head', 'post', 'put', 'delete', 'trace'];

@@ -1,9 +1,11 @@
+var libpath = process.env['ROUTESCAN_COV'] ? '../lib-cov' : '../lib';
+
 var path   = require('path');
 var fs     = require('fs');
 var should = require('should');
 var assert = require('assert');
 
-var initIgnore = require('../lib/initIgnore');
+var initIgnore = require(libpath + '/initIgnore');
 
 describe('Test initIgnore function', function() {
 
