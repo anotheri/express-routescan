@@ -16,10 +16,11 @@ describe('Test isRouteValid function', function() {
     });
 
     describe('if ignoreInvalid is `true`', function() {
+        var ignoreInvalid = true;
 
         it("should return `true` if types of `route` and `method` are Strings with some characters", function() {
             var global = {
-                ignoreInvalid: true,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -34,7 +35,7 @@ describe('Test isRouteValid function', function() {
 
         it("should return `true` if type of route is RegExp", function() {
             var global = {
-                ignoreInvalid: true,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -48,7 +49,7 @@ describe('Test isRouteValid function', function() {
 
         it("should return `false` if route is wrong value", function() {
             var global = {
-                ignoreInvalid: true,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -63,7 +64,7 @@ describe('Test isRouteValid function', function() {
 
         it("should return `false` if method is wrong value", function() {
             var global = {
-                ignoreInvalid: true,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -79,7 +80,7 @@ describe('Test isRouteValid function', function() {
 
         it("should return `false` if file is wrong value", function() {
             var global = {
-                ignoreInvalid: true,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -97,7 +98,7 @@ describe('Test isRouteValid function', function() {
 
         it("should return `false` if route is already applied to app", function() {
             var global = {
-                ignoreInvalid: true,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -113,12 +114,12 @@ describe('Test isRouteValid function', function() {
         });
     });
     
-    //TODO
     describe('if ignoreinvalid is `false`', function() {
-        
+        var ignoreInvalid = false;
+
         it("should return `true` if types of `route` and `method` are Strings with some characters", function() {
             var global = {
-                ignoreInvalid: false,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -133,7 +134,7 @@ describe('Test isRouteValid function', function() {
 
         it("should return `true` if type of route is RegExp", function() {
             var global = {
-                ignoreInvalid: false,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -147,7 +148,7 @@ describe('Test isRouteValid function', function() {
 
         it("should throw an error if route is wrong value", function() {
             var global = {
-                ignoreInvalid: false,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -164,7 +165,7 @@ describe('Test isRouteValid function', function() {
 
         it("should throw an error if method is wrong value", function() {
             var global = {
-                ignoreInvalid: false,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -185,7 +186,7 @@ describe('Test isRouteValid function', function() {
 
         it("should throw an error if file is wrong value", function() {
             var global = {
-                ignoreInvalid: false,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
@@ -205,7 +206,7 @@ describe('Test isRouteValid function', function() {
 
         it("should throw an error if route is already applied to app", function() {
             var global = {
-                ignoreInvalid: false,
+                ignoreInvalid: ignoreInvalid,
                 valid: {},
                 invalid: []
             };
