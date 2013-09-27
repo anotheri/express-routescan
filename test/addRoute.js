@@ -8,6 +8,8 @@ var express = require('express');
 
 var addRoute = require(libpath + '/addRoute');
 
+var global, app;
+
 describe('Test addRoute function', function() {
     var validFiles = [
         path.join(__dirname, './routes/good.simple.js'),
@@ -33,14 +35,18 @@ describe('Test addRoute function', function() {
     
     describe('if ignoreInvalid is `false`', function() {
 
-        it("should throw an error for wrong file values", function() {
-            var global = {
+        beforeEach(function(){
+            global = {
                 ignoreInvalid: false,
                 valid: {},
                 invalid: [],
                 ignored: []
             };
-            var app  = express();
+            app = express();
+        });
+
+        it("should throw an error for wrong file values", function() {
+            
             var fn = function() {
                 addRoute(app, wrongValues[i], global);
             };
@@ -50,13 +56,6 @@ describe('Test addRoute function', function() {
         });
 
         it("should throw an error for wrong files", function() {
-            var global = {
-                ignoreInvalid: false,
-                valid: {},
-                invalid: [],
-                ignored: []
-            };
-            var app  = express();
             var fn = function() {
                 addRoute(app, wrongFiles[i], global);
             };
@@ -78,13 +77,6 @@ describe('Test addRoute function', function() {
         });
 
         it("should throw an error for files with already applied routes (route/method)", function() {
-            var global = {
-                ignoreInvalid: false,
-                valid: {},
-                invalid: [],
-                ignored: []
-            };
-            var app  = express();
             var fn = function() {
                 addRoute(app, existsFiles[i], global);
             };
@@ -96,13 +88,6 @@ describe('Test addRoute function', function() {
         });
 
         it("should not throw any error for valid files and applies routes correct", function() {
-            var global = {
-                ignoreInvalid: false,
-                valid: {},
-                invalid: [],
-                ignored: []
-            };
-            var app  = express();
             var fn = function() {
                 addRoute(app, validFiles[i], global);
             };
@@ -119,15 +104,18 @@ describe('Test addRoute function', function() {
 
     describe('if ignoreInvalid is `true`', function() {
 
-        it("should not throw any errors and push invalides to array", function() {
-            var global = {
+        beforeEach(function(){
+            global = {
                 ignoreInvalid: true,
                 valid: {},
                 invalid: [],
                 ignored: []
             };
-            var app  = express();
+            app = express();
+        });
 
+        it("should not throw any errors and push invalides to array", function() {
+            
             var fn1 = function() {
                 addRoute(app, validFiles[i], global);
             };
@@ -154,14 +142,7 @@ describe('Test addRoute function', function() {
         });
 
         it("should apply routes correct", function() {
-            var global = {
-                ignoreInvalid: true,
-                valid: {},
-                invalid: [],
-                ignored: []
-            };
-            var app  = express();
-
+            
             var fn = function() {
                 addRoute(app, validFiles[i], global);
             };
@@ -176,14 +157,6 @@ describe('Test addRoute function', function() {
         });
 
         it("should apply apply route only first time if it's the same", function() {
-            var global = {
-                ignoreInvalid: true,
-                valid: {},
-                invalid: [],
-                ignored: []
-            };
-            var app  = express();
-
 
             (function() {
                 addRoute(app, existsFiles[0], global);
