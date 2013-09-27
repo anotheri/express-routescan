@@ -14,13 +14,10 @@ describe('Test inspectError function', function() {
     });
 
     describe('errCode is `0`:', function() {
-        it('should throw error "The first parameter is required and must be an express application."', function() {
+        var txt1 = 'should throw error "The first parameter is required and must be an express application."';
+        var fn1 = function() {
             var reError = /The first parameter is required and must be an express application/;
-            var global = {
-                ignoreInvalid: true,
-                invalid: []
-            };
-
+            
             (function(){
                 inspectError(0);
             }).should.throw(reError);
@@ -28,8 +25,24 @@ describe('Test inspectError function', function() {
             (function(){
                 inspectError(0, null, null, null, global);
             }).should.throw(reError);
+        };
+
+        describe('and ignoreInvalid is `true`:', function() {
+            var global = {
+                ignoreInvalid: true,
+                invalid: []
+            };
+
+            it(txt1, fn1);
+        });
+
+        describe('and ignoreInvalid is `false`:', function() {
+            var global = {
+                ignoreInvalid: false,
+                invalid: []
+            };
             
-            global.invalid.should.have.lengthOf(0);
+            it(txt1, fn1);
         });
     });
 
@@ -368,5 +381,39 @@ describe('Test inspectError function', function() {
                 err.should.have.property('method', method);
             });
         });
+    });
+
+    describe('errCode is `5`:', function() {
+        var txt5 = 'Routes directory is wrong.';
+        var fn5 = function() {
+            var reError = /Routes directory is wrong/;
+
+            (function(){
+                inspectError(5);
+            }).should.throw(reError);
+            
+            (function(){
+                inspectError(5, null, null, null, global);
+            }).should.throw(reError);
+        };
+
+        describe('and ignoreInvalid is `true`:', function() {
+            var global = {
+                ignoreInvalid: true,
+                invalid: []
+            };
+
+            it(txt5, fn5);
+        });
+
+        describe('and ignoreInvalid is `false`:', function() {
+            var global = {
+                ignoreInvalid: false,
+                invalid: []
+            };
+
+            it(txt5, fn5);
+        });
+
     });
 });

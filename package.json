@@ -43,6 +43,6 @@
   },
 
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "ROUTESCAN_TEST=1 ./node_modules/.bin/mocha --reporter spec"
   }
 }

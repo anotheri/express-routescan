@@ -9,14 +9,30 @@ var express = require('express');
 var initRoutes = require(libpath + '/initRoutes');
 
 describe('Test initRoutes function', function() {
-    var wrongValues = [undefined, null, NaN, '', '  ', ' \n', 12, {"a": 1}];
-    
+    var wrongValues = [undefined, null, NaN, '', '  ', ' \n', 12, {"a": 1}];    
 
     it("should exists", function() {
         should.exist(initRoutes);
     });
     
     describe('if ignoreInvalid is `false`', function() {
+
+        it('should throw en error if `dir` is wrong', function () {
+            var app = express();
+            var global = {
+                extentions: ['.js'],
+                ignoreInvalid: false,
+                valid: {},
+                invalid: [],
+                ignored: []
+            };
+
+            for (var i = 0; i < wrongValues.length; i++) {
+                (function() {
+                    initRoutes(app, wrongValues[i], global);
+                }).should.throw();
+            }
+        });
 
         it('should recursively scan `dir` folder and throw en error for first wrong file', function () {
             var app = express();
@@ -41,6 +57,23 @@ describe('Test initRoutes function', function() {
     });
 
     describe('if ignoreInvalid is `true`', function() {
+
+        it('should throw en error  if `dir` is wrong', function () {
+            var app = express();
+            var global = {
+                extentions: ['.js'],
+                ignoreInvalid: true,
+                valid: {},
+                invalid: [],
+                ignored: []
+            };
+
+            for (var i = 0; i < wrongValues.length; i++) {
+                (function function_name (argument) {
+                    initRoutes(app, wrongValues[i], global);
+                }).should.throw();
+            }
+        });
 
         describe('test for [".js"] extentions', function() {
 
@@ -134,6 +167,7 @@ describe('Test initRoutes function', function() {
             });
 
         });
+    
     });
 
 });
