@@ -21,7 +21,8 @@
     "route",
     "file",
     "automatic",
-    "scanner"
+    "scanner",
+    "override"
   ],
   
   "version": "0.1.6",
