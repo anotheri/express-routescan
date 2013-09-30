@@ -126,6 +126,28 @@ module.exports = {
 };
 ```
 
+#### Forced routes (overrides)
+
+If router already has handler for one route path and one method, other files with the same route path and the same method but scanned later will be ignored. It's a default behaviour of express-routescan. But you can use `forced` key into route definition for overrides of routes that already applied to application. So, if you have a route like the one in "Simple example" and you want to override it with another one, just add `forced: true` key into your route definition, e.g.:
+
+```javascript
+'use strict';
+
+/* GET overridden home page. */
+
+module.exports = {
+
+	'/': {
+		forced: true,
+		fn:function(req, res){
+			res.send("It's overridden main page of my app.");
+		}
+	}
+
+};
+```
+
+
 #### Usage RegExp as route
 
 If you want use RegExp with express-routescan, this example is special for you:
