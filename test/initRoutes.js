@@ -24,7 +24,8 @@ describe('Test initRoutes function', function() {
                 ignoreInvalid: false,
                 valid: {},
                 invalid: [],
-                ignored: []
+                ignored: [],
+                overridden: {}
             };
 
             for (var i = 0; i < wrongValues.length; i++) {
@@ -41,7 +42,8 @@ describe('Test initRoutes function', function() {
                 ignoreInvalid: false,
                 valid: {},
                 invalid: [],
-                ignored: []
+                ignored: [],
+                overridden: {}
             };
 
             (function function_name (argument) {
@@ -65,7 +67,8 @@ describe('Test initRoutes function', function() {
                 ignoreInvalid: true,
                 valid: {},
                 invalid: [],
-                ignored: []
+                ignored: [],
+                overridden: {}
             };
 
             for (var i = 0; i < wrongValues.length; i++) {
@@ -83,7 +86,8 @@ describe('Test initRoutes function', function() {
                 ignoreInvalid: true,
                 valid: {},
                 invalid: [],
-                ignored: []
+                ignored: [],
+                overridden: {}
             };
 
             it('should not throw any error if all arguments is correct', function () {
@@ -114,7 +118,8 @@ describe('Test initRoutes function', function() {
                 ignoreInvalid: true,
                 valid: {},
                 invalid: [],
-                ignored: []
+                ignored: [],
+                overridden: {}
             };
 
             it('should not throw any error if all arguments is correct', function () {
@@ -132,7 +137,7 @@ describe('Test initRoutes function', function() {
             });
 
             it('should correct push into `global.ignored`', function () {
-                global.ignored.should.lengthOf(11);
+                global.ignored.should.lengthOf(13);
             });
 
         });
@@ -145,7 +150,8 @@ describe('Test initRoutes function', function() {
                 ignoreInvalid: true,
                 valid: {},
                 invalid: [],
-                ignored: []
+                ignored: [],
+                overridden: {}
             };
 
             it('should not throw any error if all arguments is correct', function () {

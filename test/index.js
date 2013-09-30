@@ -1,6 +1,5 @@
 var libpath = process.env['ROUTESCAN_COV'] ? '../lib-cov' : '../lib';
 
-var path    = require('path');
 var fs      = require('fs');
 var should  = require('should');
 var assert  = require('assert');
@@ -30,8 +29,7 @@ describe('Test router function', function() {
                 }).should.throw();
             }
         });
-        
-    })
+    });
     
     describe('if ignoreInvalid is `false`', function() {
 
