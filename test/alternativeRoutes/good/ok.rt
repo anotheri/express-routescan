@@ -1,0 +1,12 @@
+
+/*
+ * It's file .rt in nested folder
+ */
+
+var okrt = function(req, res){
+    res.send("It's file .rt in nested folder");
+};
+
+module.exports = {
+    "/okrt": okrt
+};
