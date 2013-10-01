@@ -147,6 +147,27 @@ module.exports = {
 };
 ```
 
+#### Locked routes (not overridable)
+
+If you want to protect your route from overrides you should use `locked: true` key into your route definition, e.g.:
+
+```javascript
+'use strict';
+
+/* GET not overridable (even by using forced routes) home page. */
+
+module.exports = {
+
+	'/': {
+		locked: true,
+		fn:function(req, res){
+			res.send("It's not overridable main page of my app.");
+		}
+	}
+
+};
+```
+
 
 #### Usage RegExp as route
 
