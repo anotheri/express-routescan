@@ -101,7 +101,7 @@ describe('Test initRoutes function', function() {
             });
 
             it('should correct push into `global.invalid`', function () {
-                global.invalid.should.lengthOf(11);
+                global.invalid.should.lengthOf(12);
             });
 
             it('should correct push into `global.ignored`', function () {
@@ -165,7 +165,7 @@ describe('Test initRoutes function', function() {
             });
 
             it('should correct push into `global.invalid`', function () {
-                global.invalid.should.lengthOf(11);
+                global.invalid.should.lengthOf(12);
             });
 
             it('should correct push into `global.ignored`', function () {

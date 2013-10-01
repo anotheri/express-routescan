@@ -11,6 +11,7 @@ var good = function(req, res){
 module.exports = {
     '/good': {
         fn: good,
+        locked: true,
         forced: true
     }
 };

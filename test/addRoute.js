@@ -15,7 +15,9 @@ describe('Test addRoute function', function() {
         path.join(__dirname, './routes/good.simple.js'),
         path.join(__dirname, './routes/good.complex.js')
     ];
+
     var wrongValues = [undefined, null, NaN, '', '  ', ' \n', 12, 3, {"a": 1}];
+
     var wrongFiles = [
         path.join(__dirname, './routes/has.error1.js'),
         path.join(__dirname, './routes/has.error2.js'),
@@ -23,11 +25,19 @@ describe('Test addRoute function', function() {
         path.join(__dirname, './routes/has.error4too.js'),
         path.join(__dirname, './routes/has.errors.js')
     ];
+
     var existsFiles = [
         path.join(__dirname, './routes/good.simple.js'),
         path.join(__dirname, './routes/good.double.js')
     ];
+
     var forcedTest = [
+        path.join(__dirname, './routes/good.simple.js'),
+        path.join(__dirname, './routes/good/good.forced2.js'),
+        path.join(__dirname, './routes/good/good.forced.js')
+    ];
+
+    var lockedTest = [
         path.join(__dirname, './routes/good.simple.js'),
         path.join(__dirname, './routes/good/good.forced.js'),
         path.join(__dirname, './routes/good/good.forced2.js')
@@ -108,6 +118,17 @@ describe('Test addRoute function', function() {
             Object.keys(global.overridden).should.lengthOf(2);
         });
 
+        it("should throw an error for files with forced routes initiated after file with locked same route", function() {
+            var fn = function() {
+                addRoute(app, lockedTest[j], global);
+            };
+
+            for (var j = 0; j < lockedTest.length; j++) {
+                if (j === lockedTest.length-1) (fn).should.throw(/already applied to application/);
+                else (fn).should.not.throw();
+            }
+        });
+
         it("should not throw any error for valid files and applies routes correct", function() {
             var fn = function() {
                 addRoute(app, validFiles[i], global);
@@ -130,7 +151,8 @@ describe('Test addRoute function', function() {
                 ignoreInvalid: true,
                 valid: {},
                 invalid: [],
-                ignored: []
+                ignored: [],
+                overridden: {}
             };
             app = express();
         });
@@ -177,7 +199,7 @@ describe('Test addRoute function', function() {
             Object.keys(global.valid).should.lengthOf(3);
         });
 
-        it("should apply apply route only first time if it's the same", function() {
+        it("should apply route only first time if it's the same", function() {
 
             (function() {
                 addRoute(app, existsFiles[0], global);
@@ -201,6 +223,36 @@ describe('Test addRoute function', function() {
             }
 
             app.routes.should.equal(r);
+        });
+
+        it("should override route if it's the same one with forced key is true", function() {
+            var fn = function() {
+                addRoute(app, forcedTest[i], global);
+            };
+
+            for (var i = 0; i < forcedTest.length; i++) {
+                (fn).should.not.throw();
+            }
+
+            Object.keys(global.valid).should.lengthOf(1);
+            global.invalid.should.lengthOf(0);
+            global.ignored.should.lengthOf(0);
+            Object.keys(global.overridden).should.lengthOf(2);
+        });
+
+        it("should not override routes after applied the same one with locked key is true", function() {
+            var fn = function() {
+                addRoute(app, lockedTest[j], global);
+            };
+
+            for (var j = 0; j < lockedTest.length; j++) {
+                (fn).should.not.throw();
+            }
+
+            Object.keys(global.valid).should.lengthOf(1);
+            global.invalid.should.lengthOf(1);
+            global.ignored.should.lengthOf(0);
+            Object.keys(global.overridden).should.lengthOf(1);
         });
 
     });
