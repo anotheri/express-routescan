@@ -52,7 +52,7 @@ routescan(app);
 
 There are some additional options for express-routesan config:
 
-- `directory` — string or array of strings, default value is `[path.join(__dirname, './routes/')]`, so it's ./routes/ folder inside your project. If you want to use another folder(s), you should start express-routescan module with needed value of `directory` option. This option value should be a **full path to the your routes folder**. 
+- `directory` — string or array of strings, default value is `[path.join(__dirname, './routes/')]`, so it's ./routes/ folder inside your project. If you want to use another folder(s), you should start express-routescan module with needed value of `directory` option.
 
 - `ext` – array, default value is `['.js']`. Use `ext` key if you want to redefine an array with valid file extensions.
 
