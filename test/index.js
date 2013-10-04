@@ -104,6 +104,21 @@ describe('Test router function', function() {
             app.routes.post.should.lengthOf(2);
         });
 
+        it('should apply an array of directories for scan', function() {
+            global = {
+                ignoreInvalid: true,
+                directory: ['./empty', './alternativeRoutes/', './routes']
+            };
+            
+            (function() {
+                router(app, global);
+            }).should.not.throw();
+
+            Object.keys(app.routes).should.lengthOf(2);
+            app.routes.get.should.lengthOf(5);
+            app.routes.post.should.lengthOf(2);
+        });
+
         it('should not throw if have been used empty existed directory', function () {
             global = {
                 ignoreInvalid: true,
