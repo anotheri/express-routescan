@@ -60,7 +60,7 @@ describe('Test initRoutes function', function() {
 
     describe('if ignoreInvalid is `true`', function() {
 
-        it('should throw en error  if `dir` is wrong', function () {
+        it('should not throw en error if `dir` is wrong but push errors to `global.invalid`', function () {
             var app = express();
             var global = {
                 extentions: ['.js'],
@@ -74,8 +74,10 @@ describe('Test initRoutes function', function() {
             for (var i = 0; i < wrongValues.length; i++) {
                 (function function_name (argument) {
                     initRoutes(app, wrongValues[i], global);
-                }).should.throw();
+                }).should.not.throw();
             }
+
+            global.invalid.should.lengthOf(wrongValues.length);
         });
 
         describe('test for [".js"] extentions', function() {

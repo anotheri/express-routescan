@@ -56,6 +56,18 @@ describe('Test router function', function() {
             app.routes.get.should.lengthOf(2);
         });
 
+        it('should throw if have been used not existed directory', function () {
+            global = {
+                directory: './iamWrongFolder/'
+            };
+            
+            (function() {
+                router(app, global);
+            }).should.throw(/Routes directory is wrong/);
+
+            Object.keys(app.routes).should.lengthOf(0);
+        });
+
     });
 
     describe('if ignoreInvalid is `true`', function() {
@@ -76,7 +88,7 @@ describe('Test router function', function() {
             }
         });
 
-        it('should throw if have been used not existed directory', function () {
+        it('should not throw if have been used not existed directory', function () {
             global = {
                 ignoreInvalid: true,
                 directory: './iamWrongFolder/'
@@ -84,7 +96,7 @@ describe('Test router function', function() {
             
             (function() {
                 router(app, global);
-            }).should.throw(/Routes directory is wrong/);
+            }).should.not.throw();
 
             Object.keys(app.routes).should.lengthOf(0);
         });

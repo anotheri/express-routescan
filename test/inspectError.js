@@ -384,35 +384,36 @@ describe('Test inspectError function', function() {
     });
 
     describe('errCode is `5`:', function() {
-        var txt5 = 'Routes directory is wrong.';
-        var fn5 = function() {
-            var reError = /Routes directory is wrong/;
-
-            (function(){
-                inspectError(5);
-            }).should.throw(reError);
-            
-            (function(){
-                inspectError(5, null, null, null, global);
-            }).should.throw(reError);
-        };
 
         describe('and ignoreInvalid is `true`:', function() {
-            var global = {
-                ignoreInvalid: true,
-                invalid: []
-            };
 
-            it(txt5, fn5);
+            it('should throw an error if Routes directory is wrong.', function() {
+                var global = {
+                    ignoreInvalid: true,
+                    invalid: []
+                };
+
+                var reError = /Routes directory is wrong/;
+                
+                (function(){
+                    inspectError(5, null, null, null, global);
+                }).should.not.throw();
+            });
         });
 
         describe('and ignoreInvalid is `false`:', function() {
-            var global = {
-                ignoreInvalid: false,
-                invalid: []
-            };
 
-            it(txt5, fn5);
+            it('should not throw an error if Routes directory is wrong.', function() {
+                var global = {
+                    ignoreInvalid: false,
+                    invalid: []
+                };            
+                var reError = /Routes directory is wrong/;
+                
+                (function(){
+                    inspectError(5, null, null, null, global);
+                }).should.throw(reError);
+            });
         });
 
     });
