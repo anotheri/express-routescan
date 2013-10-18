@@ -108,7 +108,7 @@ module.exports = {
 
 	'/': function(req, res){
 		res.send("It's main page of my app. It use GET method.");
-	}
+	},
 
 
 	'/myAwesomeRouteForGetAndPost': {
