@@ -106,11 +106,6 @@ of HTTP methods described in RFC 2616) and `middleware` function(s):
 
 module.exports = {
 
-	'/': function(req, res){
-		//callback function is required
-		res.send("It's main page of my app. It use GET method.");
-	},
-
 	'/': {
 		methods: ['get'],
 		//callback `fn` function is required
@@ -118,7 +113,6 @@ module.exports = {
 			res.send("It's main page of my app. It use GET method.");
 		}
 	},
-
 
 	'/myAwesomeRouteForGetAndPost': {
 		methods: ['get', 'post'],
