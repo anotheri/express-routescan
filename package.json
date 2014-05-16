@@ -11,9 +11,9 @@
     "type": "git",
     "url": "http://github.com/anotheri/express-routescan.git"
   },
-  
+
   "description": "Automatic file scanner for Express JS router.",
-  
+
   "keywords": [
     "express",
     "expressjs",
@@ -24,13 +24,13 @@
     "scanner",
     "override"
   ],
-  
+
   "version": "0.1.9",
-  
+
   "main": "./index",
-    
+
   "dependencies": {},
-  
+
   "devDependencies": {
     "mocha": "*",
     "should": "*",
@@ -38,7 +38,7 @@
   },
 
   "optionalDependencies": {},
-  
+
   "engines": {
     "node": "*"
   },
