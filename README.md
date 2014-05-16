@@ -30,18 +30,18 @@ For correct working you should require express-routescan module and pass _expres
 the one as first argument:
 
 ```javascript
-// app.js 
+// app.js
 
 // requires
 var express = require('express');
 var routescan = require('express-routescan');
 // …
-	
+
 var app = express();
 
 // app configuration
-	
-// start express-routescan. 
+
+// start express-routescan.
 routescan(app);
 
 // ...
@@ -60,6 +60,8 @@ There are some additional options for express-routesan config:
 
 - `verbose` – boolean, default is `false`. This option is using for logging information about scanned files (ignored, invalid, routed).
 
+- `strictMode` – boolean, default is `false`. If it's `true` routes with method `all` are filtered as invalid.
+
 ```javascript
 routescan(app, {
 	directory: [
@@ -69,7 +71,8 @@ routescan(app, {
 	],
 	ext: ['.rt', '.js'], // is for enable scanning for all *.rt and *.js files
 	ignoreInvalid: true, // is for ignoring invalid routes
-	verbose: true
+	verbose: true,
+	strictMode: true // is for filtering `all`-method routes.
 });
 ```
 
@@ -216,7 +219,7 @@ temp/
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2013 Alexander Bykhov
+Copyright (c) 2013-2014 Alexander Bykhov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
