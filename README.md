@@ -145,8 +145,6 @@ The order of the route initialization is matter. So if you need middleware funct
 ```javascript
 'use strict';
 
-/* GET home page. */
-
 module.exports = {
     'logger': {
         methods: [ 'use' ],
@@ -173,8 +171,6 @@ But if you need middleware function that should be defined _after_ all your rout
 
 ```javascript
 'use strict';
-
-/* GET home page. */
 
 module.exports = {
     'error handler': {
