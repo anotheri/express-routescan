@@ -140,7 +140,7 @@ module.exports = {
 
 #### Middleware with USE method (loggers, error handlers, etc)
 
-The order of the route initialisation is matter. So if you need middleware function that should be done every time _before_ each your routes, you should have the first route defined the next way (it may be defined in file which name start with underscore, e.g. `_logger.js` or '_middleware.js'):
+The order of the route initialization is matter. So if you need middleware function that should be done every time _before_ each your routes, you should have the first route defined the next way (it may be defined in file which name start with underscore, e.g. `_logger.js` or `_middleware.js`):
 
 ```
 'use strict';
@@ -188,7 +188,7 @@ module.exports = {
 };
 ```
 
-The `deferred` key works only with 'use' method and it's used to define middleware function that should be defined after the routes. 
+The `deferred` key works only with 'use' method and it's used to define middleware function that should be defined after the routes.
 
 
 #### Forced routes (overrides)
