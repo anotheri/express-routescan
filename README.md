@@ -142,7 +142,7 @@ module.exports = {
 
 The order of the route initialization is matter. So if you need middleware function that should be done every time _before_ each your routes, you should have the first route defined the next way (it may be defined in file which name start with underscore, e.g. `_logger.js` or `_middleware.js`):
 
-```
+```javascript
 'use strict';
 
 /* GET home page. */
@@ -161,7 +161,7 @@ module.exports = {
 
 In case of using `use` method the route name isn't so important, I'd suggest to name it accordingly to the functionality of the handler. So the previous example will be work like this one:
 
-```
+```javascript
 app.use(function( req, res, next ){
     // It'll be done before each of your routes
     console.log('It has been logged');
@@ -171,7 +171,7 @@ app.use(function( req, res, next ){
 
 But if you need middleware function that should be defined _after_ all your routes (e.g. error handler) and should be called in case of requested route is undefined (kind of default route), you shouldn't define in the last file of the route folder, or make a new separate file named like last file of the route folder, but it'll work as well. It's much better for maintaining to define your route with `deferred: true` key:
 
-```
+```javascript
 'use strict';
 
 /* GET home page. */
