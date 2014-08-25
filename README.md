@@ -60,7 +60,7 @@ There are some additional options for express-routesan config:
 
 - `verbose` – boolean, default is `false`. This option is using for logging information about scanned files (ignored, invalid, routed).
 
-- `strictMode` – boolean, default is `false`. If it's `true` routes with method `all` are filtered as invalid.
+- `strictMode` – boolean, default is `false`. If it's `true` routes with method `all` and `use` are filtered as invalid.
 
 ```javascript
 routescan(app, {
@@ -72,7 +72,7 @@ routescan(app, {
 	ext: ['.rt', '.js'], // is for enable scanning for all *.rt and *.js files
 	ignoreInvalid: true, // is for ignoring invalid routes
 	verbose: true,
-	strictMode: true // is for filtering `all`-method routes.
+	strictMode: true // is for filtering `all`-method and `use`-method routes.
 });
 ```
 
@@ -137,6 +137,59 @@ module.exports = {
 
 };
 ```
+
+#### Middleware with USE method (loggers, error handlers, etc)
+
+The order of the route initialisation is matter. So if you need middleware function that should be done every time _before_ each your routes, you should have the first route defined the next way (it may be defined in file which name start with underscore, e.g. `_logger.js` or '_middleware.js'):
+
+```
+'use strict';
+
+/* GET home page. */
+
+module.exports = {
+    'logger': {
+        methods: [ 'use' ],
+        fn: function( req, res, next ){
+            // It'll been done before each of your routes
+            console.log('It has been logged');
+            next();
+        }
+    }
+};
+```
+
+In case of using `use` method the route name isn't so important, I'd suggest to name it accordingly to the functionality of the handler. So the previous example will be work like this one:
+
+```
+app.use(function( req, res, next ){
+    // It'll be done before each of your routes
+    console.log('It has been logged');
+    next();
+}
+```
+
+But if you need middleware function that should be defined _after_ all your routes (e.g. error handler) and should be called in case of requested route is undefined (kind of default route), you shouldn't define in the last file of the route folder, or make a new separate file named like last file of the route folder, but it'll work as well. It's much better for maintaining to define your route with `deferred: true` key:
+
+```
+'use strict';
+
+/* GET home page. */
+
+module.exports = {
+    'error handler': {
+        methods: [ 'use' ],
+        deferred: true,
+        fn: function( req, res, next ){
+            // It'll be done in case of requested route is undefined
+            res.send('404 Not Found');
+        }
+    }
+};
+```
+
+The `deferred` key works only with 'use' method and it's used to define middleware function that should be defined after the routes. 
+
 
 #### Forced routes (overrides)
 
